@@ -1,17 +1,23 @@
 import React from 'react';
 import TaskPage from '../pages/task';
-import {create, read, update, remove} from '../services/api';
+import {create, read, update, remove, readSlack} from '../services/api';
 
 class Task extends React.Component{
   constructor (props) {
     super(props);
     this.state = {
       errors: [],
-      item: {},
+      item: {
+        title: '',
+        slackChannel: {},
+        date: new Date(),
+        description: ''
+      },
       method: 'create',
       success: false,
       message: null,
       items: [],
+      slackChannels: []
     };
     this.onNewItem = this.onNewItem.bind(this);
     this.onRemoveItem = this.onRemoveItem.bind(this);
@@ -22,8 +28,19 @@ class Task extends React.Component{
 
   async componentDidMount() {
     try {
+      const channels = await readSlack();
       const itemsResponse = await read();
-      this.setState({items: itemsResponse.data})
+      
+      var newItem = this.state.item;
+      if(channels.data.length > 0){
+        newItem.slackChannel = channels.data[0];
+      }
+
+      this.setState({
+        item: newItem,
+        items: itemsResponse.data,
+        slackChannels: channels.data,
+      })
     } catch (error) {
       this.setState({errors: error})
     }
@@ -57,6 +74,20 @@ class Task extends React.Component{
     return formIsValid;
   }
 
+  initItemDefault(){
+    let {slackChannels} = this.state;
+
+    const itemDefault = {
+      title:'',
+      slackChannel:(slackChannels.length > 0) ? slackChannels[0] : {},
+      date:new Date(),
+      description:''
+    }
+
+    return itemDefault;
+
+  }
+
   async onNewItem(e) {
     e.preventDefault();
     if(!this.handleValidation()){
@@ -75,9 +106,10 @@ class Task extends React.Component{
           ...this.state.items,
           response.data
         ],
-        item: {title:'', slackChannel:'', date:'', description:''},
+        item: this.initItemDefault(),
         success: response.success,
-        message: response.message, 
+        message: response.message,
+        errors: (response.errors) ? response.errors : []
       })
     } catch (error) {
       this.setState({
@@ -89,8 +121,10 @@ class Task extends React.Component{
   }
 
   onEditItem(editItem) {
+    var itemNew = Object.assign({}, editItem)
+    itemNew.date = new Date(editItem.date);
     this.setState({
-      item: Object.assign({}, editItem),
+      item: itemNew,
       method: 'update',
       errors: [],
       message: null
@@ -117,10 +151,11 @@ class Task extends React.Component{
   
       this.setState({
         method: 'create',
-        item: {title:'', slackChannel:'', date:'', description:''},
+        item: this.initItemDefault(),
         items: newItems,
         success: response.success,
-        message: response.message, 
+        message: response.message,
+        errors: (response.errors) ? response.errors : []
       })
     } catch (error) {
       this.setState({
@@ -145,9 +180,10 @@ class Task extends React.Component{
       this.setState({
         method: 'create',
         success: response.success,
-        message: response.message, 
+        message: response.message,
+        errors: (response.errors) ? response.errors : [],
         items: newItems,
-        item: {title:'', slackChannel:'', date:'', description:''},
+        item: this.initItemDefault(),
       });
     } catch (error) {      
       this.setState({
@@ -158,11 +194,31 @@ class Task extends React.Component{
     }
   }
 
+  handleCleanValidation(field){
+    const {errors} = this.state;
+    const newErrors = errors.slice();
+    const index = errors.findIndex(n => n.field === field);
+    if(index !== -1) {      
+      newErrors.splice(index, 1);
+    }
+    return newErrors 
+  }
+
   handleChange = e => {
+    var a = new Date()
     var newItem = this.state.item;
-    newItem[e.target.name] =  e.target.value
+    var field;
+    if(e instanceof Date || e == null){
+      field="date";
+      newItem['date'] = e;
+    } else {
+      field=e.target.name;
+      newItem[e.target.name] =  e.target.value
+    }
+          
     this.setState({
-      item: newItem
+      item: newItem,
+      errors: this.handleCleanValidation(field)
     })
   };
 
@@ -186,16 +242,17 @@ class Task extends React.Component{
   // }
 
   render(){
-    const {items, item, method, success, message, errors} = this.state;
+    const {items, item, method, success, message, errors, slackChannels} = this.state;
     return (
       <TaskPage
-        success={success}
-        message={message}
-        errors={errors}
-        items={items}
-        item={item}
-        method={method}
-        onNewItem={this.onNewItem}
+        success = {success}
+        message = {message}
+        errors = {errors}
+        items = {items}
+        item = {item}
+        method = {method}
+        channels = {slackChannels}
+        onNewItem = {this.onNewItem}
         onEditItem = {this.onEditItem}
         onUpdateItem = {this.onUpdateItem}
         onRemoveItem = {this.onRemoveItem}

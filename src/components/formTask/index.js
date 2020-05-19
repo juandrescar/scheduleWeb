@@ -2,15 +2,21 @@ import React from 'react';
 import { Form, Button, Col, Container, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+import "./style.css"
+
 function FormTask(props) {
   const {
     errors,
     item,
+    channels,
     method,
     onNewItem,
     onUpdateItem,
     handleSubmit,
-    handleChange
+    handleChange,
   } = props;
 
   var validations = errors.map(function (msg){
@@ -19,7 +25,7 @@ function FormTask(props) {
     return error;
   })
 
-  var validations = validations.reduce(function(result, item) {
+  validations = validations.reduce(function(result, item) {
     var key = Object.keys(item)[0];
     result[key] = item[key];
     return result;
@@ -47,7 +53,16 @@ function FormTask(props) {
                 Canal de Slack
               </Form.Label>
               <Col>
-                <Form.Control name="slackChannel" value={item.slackChannel} size="sm" type="text" onChange={handleChange} placeholder="Indique canal de slack a conectarse" isInvalid={!!validations.slackChannel}/>
+                <Form.Control as="select" size="sm" name="slackChannel" placeholder="select" value={item.slackChannel} onChange={handleChange} custom isInvalid={!!validations.slackChannel}>
+                  {channels.map((channel, i) =>
+                    <option
+                      key={i}
+                      value={channel}
+                    >              
+                      {channel.name}
+                    </option>
+                  )} 
+                </Form.Control>
                 <Form.Control.Feedback type="invalid">
                   {validations.slackChannel}
                 </Form.Control.Feedback>
@@ -58,10 +73,16 @@ function FormTask(props) {
                 Fecha
               </Form.Label>
               <Col>
-                <Form.Control name="date" value={item.date} size="sm" type="text" onChange={handleChange} placeholder="Indique canal de slack a conectarse" isInvalid={!!validations.date}/>
-                <Form.Control.Feedback type="invalid">
-                  {validations.date}
-                </Form.Control.Feedback>
+                <DatePicker
+                  selected={item.date}
+                  onChange={handleChange}
+                  minDate={new Date()}
+                  isClearable
+                  dateFormat="yyyy/MM/dd"
+                  className={"form-control form-control-sm " + ((!!validations.date) ? "is-invalid" : '')}
+                />
+                <span className="is-invalid"></span>
+                <div className="invalid-feedback">{validations.date}</div>
               </Col>
             </Form.Row>
             <Form.Row>
@@ -77,7 +98,7 @@ function FormTask(props) {
             <Button variant="primary" type="button" size="sm" block onClick={onNewItem}>
               Submit
             </Button>
-            <Button variant="primary" type="button" size="sm" block disabled={method != 'update'} onClick={onUpdateItem}>
+            <Button variant="primary" type="button" size="sm" block disabled={method !== 'update'} onClick={onUpdateItem}>
               Actualizar
             </Button>
           </Col>

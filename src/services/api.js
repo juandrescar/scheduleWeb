@@ -26,3 +26,7 @@ export function update(id, data) {
 export function remove(id) {
   return request(`/api/tasks/${id}`, 'DELETE')
 }
+
+export function readSlack() {
+  return request('/api/slacks', 'GET')
+}

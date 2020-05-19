@@ -13,6 +13,7 @@ function TaskPage(props) {
     message,
     items,
     item,
+    channels,
     method,
     onNewItem,
     onEditItem,
@@ -36,6 +37,7 @@ function TaskPage(props) {
           errors={errors}
           item={item}
           method={method}
+          channels={channels}
           onNewItem={onNewItem}
           onUpdateItem={onUpdateItem}
           handleSubmit={handleSubmit}

@@ -32,8 +32,8 @@ function ListTask(props) {
               <td>{i + 1}</td>
               <td>{task.title}</td>
               <td>{task.description}</td>
-              <td>{task.slackChannel}</td>
-              <td>{task.date}</td>
+              <td>{task.slackChannel.name}</td>
+              <td>{task.customDate}</td>
               <td>
                 {/* <Button 
                   variant="success"
