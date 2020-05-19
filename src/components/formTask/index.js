@@ -1,9 +1,7 @@
 import React from 'react';
 import { Form, Button, Col, Container, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
 import "./style.css"
 

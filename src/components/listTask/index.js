@@ -1,12 +1,16 @@
 import React from 'react';
-import { Table, Button, Container } from 'react-bootstrap';
+import { Table, Button, Container, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons'
+import "./style.css"
 
 function ListTask(props) {
   const {
     items,
     onEditItem,
     onRemoveItem,
+    onToggledItemComplete
   } = props;
 
   return(
@@ -35,21 +39,22 @@ function ListTask(props) {
               <td>{task.slackChannel.name}</td>
               <td>{task.customDate}</td>
               <td>
-                {/* <Button 
-                  variant="success"
+                <Button 
+                  variant="outline-success"
                   type="button"
-                  size="sm" 
+                  size="lg" 
                   onClick={() => onToggledItemComplete(task)}
                 >
-                  Ejecutar
-                </Button> */}
+                  <FontAwesomeIcon icon={(task.status) ? faToggleOn:faToggleOff} />
+                </Button>
                 <Button 
-                  variant="danger"
+                  variant="outline-danger"
                   type="button"
-                  size="sm"
+                  size="lg"
+                  disabled={task.status}
                   onClick={() => onRemoveItem(task)}
                 >
-                  Eliminar
+                  <FontAwesomeIcon icon={faTrash} />
                 </Button>
               </td>
             </tr>

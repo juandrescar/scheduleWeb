@@ -3,7 +3,7 @@ import Layout from '../../components/layout';
 import Alert from '../../components/alert';
 import FormTask from '../../components/formTask';
 import ListTask from '../../components/listTask';
-import { Card } from 'react-bootstrap';
+import { Card, Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function TaskPage(props) {
@@ -11,6 +11,7 @@ function TaskPage(props) {
     errors,
     success,
     message,
+    loading,
     items,
     item,
     channels,
@@ -19,14 +20,19 @@ function TaskPage(props) {
     onEditItem,
     onUpdateItem,
     onRemoveItem,
-    // onToggledItemComplete,
+    onToggledItemComplete,
     handleSubmit,
     handleChange
   } = props;
 
   return (
     <Layout>
-      <Card className="m-3">
+      <Card className="m-3 pt-2">
+        {
+          (loading) ?
+            <Spinner animation="border" className="mx-auto" />
+          : ''
+        }
         <Alert 
           success={success}
           message={message}
@@ -48,6 +54,7 @@ function TaskPage(props) {
           items={items}
           onEditItem={onEditItem}
           onRemoveItem={onRemoveItem}
+          onToggledItemComplete={onToggledItemComplete}
         />
       </Card>
     </Layout>

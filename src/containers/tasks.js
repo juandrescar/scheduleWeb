@@ -1,6 +1,6 @@
 import React from 'react';
 import TaskPage from '../pages/task';
-import {create, read, update, remove, readSlack} from '../services/api';
+import {create, read, update, remove, readSlack, toggleTask} from '../services/api';
 
 class Task extends React.Component{
   constructor (props) {
@@ -15,6 +15,7 @@ class Task extends React.Component{
       },
       method: 'create',
       success: false,
+      loading: true,
       message: null,
       items: [],
       slackChannels: []
@@ -24,6 +25,7 @@ class Task extends React.Component{
     this.handleChange = this.handleChange.bind(this);
     this.onUpdateItem = this.onUpdateItem.bind(this);
     this.onEditItem = this.onEditItem.bind(this);
+    this.onToggledItemComplete = this.onToggledItemComplete.bind(this);
   }
 
   async componentDidMount() {
@@ -37,6 +39,7 @@ class Task extends React.Component{
       }
 
       this.setState({
+        loading: false,
         item: newItem,
         items: itemsResponse.data,
         slackChannels: channels.data,
@@ -89,6 +92,9 @@ class Task extends React.Component{
   }
 
   async onNewItem(e) {
+    this.setState({
+      loading: true
+    });
     e.preventDefault();
     if(!this.handleValidation()){
       return;
@@ -101,6 +107,7 @@ class Task extends React.Component{
       const response = await create(data)
 
       this.setState({
+        loading: false,
         method: 'create',
         items: [
           ...this.state.items,
@@ -113,6 +120,7 @@ class Task extends React.Component{
       })
     } catch (error) {
       this.setState({
+        loading: false,
         success: error.response.data.success,
         message: error.response.data.message,
         errors: error.response.data.errors
@@ -132,6 +140,10 @@ class Task extends React.Component{
   }
 
   async onUpdateItem(editItem) {
+    this.setState({
+      loading: true
+    });
+
     if(!this.handleValidation()){
       return;
     }
@@ -150,6 +162,7 @@ class Task extends React.Component{
       newItems[index] = response.data;
   
       this.setState({
+        loading: false,
         method: 'create',
         item: this.initItemDefault(),
         items: newItems,
@@ -159,6 +172,7 @@ class Task extends React.Component{
       })
     } catch (error) {
       this.setState({
+        loading: false,
         success: error.response.data.success,
         message: error.response.data.message,
         errors: error.response.data.errors
@@ -167,6 +181,9 @@ class Task extends React.Component{
   }
 
   async onRemoveItem(item) {
+    this.setState({
+      loading: true
+    });
     try {
       const {items} = this.state;
       const response = await remove(item._id);
@@ -178,6 +195,7 @@ class Task extends React.Component{
       const newItems = items.slice();
       newItems.splice(index, 1);
       this.setState({
+        loading: false,
         method: 'create',
         success: response.success,
         message: response.message,
@@ -187,6 +205,7 @@ class Task extends React.Component{
       });
     } catch (error) {      
       this.setState({
+        loading: false,
         success: error.response.data.success,
         message: error.response.data.message,
         errors: error.response.data.errors
@@ -205,7 +224,6 @@ class Task extends React.Component{
   }
 
   handleChange = e => {
-    var a = new Date()
     var newItem = this.state.item;
     var field;
     if(e instanceof Date || e == null){
@@ -222,30 +240,52 @@ class Task extends React.Component{
     })
   };
 
-  // onToggledItemComplete(item) {
-  //   const {
-  //     items
-  //   } = this.state;
+  async onToggledItemComplete(item) {
+    this.setState({
+      loading: true
+    });
 
-  //   this.setState({
-  //     items: items.map((next) => {
-  //       if(next.id === item.id) {
-  //         return {
-  //           ... next,
-  //           isCheked: !item.isCheked,
-  //         };
+    item.status = !item.status;
+    item.finalDate = new Date();
 
-  //         return next;
-  //       }
-  //     })
-  //   })
-  // }
+    try {
+      const response = await toggleTask(item._id, item);
+
+      const {items} = this.state;
+      const index = items.findIndex(n => n._id === this.state.item._id);
+  
+      if(index === -1) {
+        return;
+      } 
+
+      const newItems = items.slice();
+      newItems[index] = response.data;
+  
+      this.setState({
+        loading: false,
+        method: 'create',
+        item: this.initItemDefault(),
+        items: newItems,
+        success: response.success,
+        message: response.message,
+        errors: (response.errors) ? response.errors : []
+      })
+    } catch (error) {
+      this.setState({
+        loading: false,
+        success: error.response.data.success,
+        message: error.response.data.message,
+        errors: error.response.data.errors
+      })
+    }
+  }
 
   render(){
-    const {items, item, method, success, message, errors, slackChannels} = this.state;
+    const {items, item, method, success, loading, message, errors, slackChannels} = this.state;
     return (
       <TaskPage
         success = {success}
+        loading = {loading}
         message = {message}
         errors = {errors}
         items = {items}
@@ -256,6 +296,7 @@ class Task extends React.Component{
         onEditItem = {this.onEditItem}
         onUpdateItem = {this.onUpdateItem}
         onRemoveItem = {this.onRemoveItem}
+        onToggledItemComplete = {this.onToggledItemComplete}
         handleSubmit = {this.handleSubmit}
         handleChange = {this.handleChange}
       />
