@@ -15,16 +15,16 @@ function ListTask(props) {
 
   return(
     <Container className='mt-5'>
-      <h2>Listado de Tareas</h2>
+      <h2>Task list</h2>
       <Table responsive striped bordered hover>
         <thead>
           <tr>
             <th>#</th>
-            <th>Titulo</th>
-            <th>Descripción</th>
-            <th>Canal Slack</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Slack's Channel</th>
+            <th>Date</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>

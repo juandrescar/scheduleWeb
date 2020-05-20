@@ -31,16 +31,16 @@ function FormTask(props) {
 
   return(
     <Container className='mt-5'>
-      <h2>Formulario de Tareas</h2>
+      <h2>Task Form</h2>
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col xs={10}>
             <Form.Row>
               <Form.Label column="sm" lg={2}>
-                Titulo de la tarea
+                Task title
               </Form.Label>
               <Col>
-                <Form.Control name="title" value={item.title} onChange={handleChange} size="sm" type="text" placeholder="Agregue un titulo" isInvalid={!!validations.title}/>
+                <Form.Control name="title" value={item.title} onChange={handleChange} size="sm" type="text" placeholder="Add a title" isInvalid={!!validations.title}/>
                 <Form.Control.Feedback type="invalid">
                   {validations.title}
                 </Form.Control.Feedback>
@@ -48,10 +48,10 @@ function FormTask(props) {
             </Form.Row>
             <Form.Row>
               <Form.Label column="sm" lg={2}>
-                Canal de Slack
+                Slack's channel
               </Form.Label>
               <Col>
-                <Form.Control as="select" size="sm" name="slackChannel" placeholder="select" value={item.slackChannel} onChange={handleChange} custom isInvalid={!!validations.slackChannel}>
+                <Form.Control as="select" size="sm" name="slackChannel" placeholder="Select channel" value={item.slackChannel} onChange={handleChange} custom isInvalid={!!validations.slackChannel}>
                   {channels.map((channel, i) =>
                     <option
                       key={i}
@@ -68,7 +68,7 @@ function FormTask(props) {
             </Form.Row>
             <Form.Row>
               <Form.Label column="sm" lg={2}>
-                Fecha
+                Date
               </Form.Label>
               <Col>
                 <DatePicker
@@ -85,10 +85,10 @@ function FormTask(props) {
             </Form.Row>
             <Form.Row>
               <Form.Label column="sm" sm={2}>
-                Descripción
+                Description
               </Form.Label>
               <Col>
-                <Form.Control name="description" value={item.description} onChange={handleChange} as="textarea" size="sm" type="text" placeholder="Descripción de la tarea" />
+                <Form.Control name="description" value={item.description} onChange={handleChange} as="textarea" size="sm" type="text" placeholder="Task description" />
               </Col>
             </Form.Row>
           </Col>
@@ -97,7 +97,7 @@ function FormTask(props) {
               Submit
             </Button>
             <Button variant="primary" type="button" size="sm" block disabled={method !== 'update'} onClick={onUpdateItem}>
-              Actualizar
+              Update
             </Button>
           </Col>
         </Row>
