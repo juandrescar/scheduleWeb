@@ -1,10 +1,9 @@
 import Axios from 'axios';
-const baseUrl = 'http://localhost:9000';
 
 async function request(url, method, data1){
   const response = await Axios({
     method: method,
-    url: `${baseUrl}${url}`,
+    url: `${process.env.REACT_APP_API_URL}${url}`,
     responseType: 'json',
     data: data1 ? data1 : undefined
   })

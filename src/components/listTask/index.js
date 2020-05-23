@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Container, Form } from 'react-bootstrap';
+import { Table, Button, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons'

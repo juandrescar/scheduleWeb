@@ -45,7 +45,12 @@ class Task extends React.Component{
         slackChannels: channels.data,
       })
     } catch (error) {
-      this.setState({errors: error})
+      this.setState({
+        loading: false,
+        success: error.response.data.success,
+        message: error.response.data.message,
+        errors: error.response.data.errors
+      })
     }
   }
 

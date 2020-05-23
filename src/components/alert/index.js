@@ -12,16 +12,28 @@ function AlertTask(props) {
   return(
     <Alert variant={success ? 'success' : 'danger'} show={message!=null}>
       <Alert.Heading>{message}</Alert.Heading>
-      <ul>
-        {errors.map((error, i) =>
-          <li
-            key={i}
-          >
-            {error.msg}
-          </li>
-        )}
-      </ul>
+      {
+        <List errors={errors} />
+      }
     </Alert>
+  );
+}
+
+function List({ errors }) {
+  if (errors.length === 0 || errors === null) {
+    return null;
+  }
+ 
+  return (
+    <ul>
+      {errors.map((error, i) =>
+        <li
+          key={i}
+        >
+          {error.msg}
+        </li>
+      )}
+    </ul>
   );
 }
 
