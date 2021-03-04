@@ -1,6 +1,6 @@
 import React from 'react';
 import './style.css';
-import logo from '../../logo.svg';
+import logo from '../../logo.png';
 
 import { Navbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
